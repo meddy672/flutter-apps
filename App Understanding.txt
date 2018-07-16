@@ -1,0 +1,39 @@
+  // Main function is the entry point to the app
+  // Main function will attach container widget to screen
+  // Container widget will holder all other widgets required by the app
+  // runApp function is pre built flutter function that
+  // takes a container widget as its parameter
+
+  // MyApp will act as container widget for all other widgets
+
+  // Required method to draw Widget onto the screen
+  // @context: Required
+  // context contains meta data about the widget being returned
+  // BuildContext apart of the material dart package
+
+  // Build method must return widget.
+
+  // @MaterialApp
+  // MaterialApp is the core root widget of flutter
+  // Provides theming, navigation
+  // MaterialApp takes Parameter Scaffold
+
+  // @home references Scaffold Widget
+  // Scaffold widget creates new page in the app with
+  // default white background.
+  // Scaffold is apart of the Material.dart package
+  // Scaffold takes parameter AppBar Widget
+
+  // @appBar navigation bar/ widget
+  // @title title for navigation bar/ widget
+
+  // @body references Card widget from material package
+  // @child is the content of the body
+  // Column is a layout widget that takes children widgets
+  // @children is an array of widgets
+
+  // Container widget can hold widgets to allow positioning
+  // by use of EdgeInsets which is measured in pixals
+
+  // StatefulWidget allows for dynamic container widgets
+  // setState method allows flutter to recognize changes to the ui and update them
