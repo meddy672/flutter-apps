@@ -1,13 +1,16 @@
 import 'dart:async';
+import 'package:scoped_model/scoped_model.dart';
 
 import 'package:flutter/material.dart';
+import '../scoped-models/products.dart';
+
 import '../widgets/ui_elements/address_tag.dart';
+import '../models/product.dart';
 
 class ProductPage extends StatelessWidget {
-  final String title;
-  final String imageUrl;
-  final String description;
-  final double price;
+  final int productIndex;
+
+  ProductPage(this.productIndex);
 
   _showWarningDialog(BuildContext context) {
     showDialog(
@@ -47,7 +50,7 @@ class ProductPage extends StatelessWidget {
     );
   }
 
-  Widget buildTitleContainer() {
+  Widget buildTitleContainer(String title, double price) {
     return Container(
       padding: EdgeInsets.all(10.0),
       child: Row(
@@ -95,50 +98,50 @@ class ProductPage extends StatelessWidget {
 
   Widget buildDeleteContainer(BuildContext context) {
     return Container(
-        padding: EdgeInsets.all(10.0),
-        child: RaisedButton.icon(
-          textColor: Colors.white,
-          label: Text('DELETE'),
-          icon: Icon(Icons.delete),
-          shape: RoundedRectangleBorder(),
-          color: Theme.of(context).accentColor,
-          onPressed: () => _showWarningDialog(context),
-        ),
-      );
+      padding: EdgeInsets.all(10.0),
+      child: RaisedButton.icon(
+        textColor: Colors.white,
+        label: Text('DELETE'),
+        icon: Icon(Icons.delete),
+        shape: RoundedRectangleBorder(),
+        color: Theme.of(context).accentColor,
+        onPressed: () => _showWarningDialog(context),
+      ),
+    );
   }
-
-  ProductPage(this.title, this.description, this.price, this.imageUrl);
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () {
-        print('Back button pressed!');
-        Navigator.pop(context, false);
-        return Future.value(false);
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(title),
-        ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Image.asset(imageUrl),
-            buildAddressContainer(),
-            buildTitleContainer(),
-            buildLabelContainer(),
-            Container(
-              padding: EdgeInsets.all(10.0),
-              child: Text(
-                description,
-                textAlign: TextAlign.center,
+    return WillPopScope(onWillPop: () {
+      print('Back button pressed!');
+      Navigator.pop(context, false);
+      return Future.value(false);
+    }, child: ScopedModelDescendant<ProductsModel>(
+      builder: (BuildContext context, Widget widget, ProductsModel model) {
+        final Product product = model.products[productIndex];
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(product.title),
+          ),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Image.asset(product.image),
+              buildAddressContainer(),
+              buildTitleContainer(product.title, product.price),
+              buildLabelContainer(),
+              Container(
+                padding: EdgeInsets.all(10.0),
+                child: Text(
+                  product.description,
+                  textAlign: TextAlign.center,
+                ),
               ),
-            ),
-            buildDeleteContainer(context),
-          ],
-        ),
-      ),
-    );
+              buildDeleteContainer(context),
+            ],
+          ),
+        );
+      },
+    ));
   }
 }
