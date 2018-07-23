@@ -35,5 +35,6 @@
   // Container widget can hold widgets to allow positioning
   // by use of EdgeInsets which is measured in pixals
 
-  // StatefulWidget allows for dynamic container widgets
+  // StatefulWidget manage the data of the application
+  // StatelessWidget act as containers and provide layouts, and other widgets
   // setState method allows flutter to recognize changes to the ui and update them
