@@ -28,7 +28,7 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     return EnsureVisibleWhenFocused(
         focusNode: _titleFocusNode,
         child: TextFormField(
-          focusNode: _descriptionFocusNode,
+          focusNode: _titleFocusNode,
           decoration: InputDecoration(labelText: 'Product Title'),
           initialValue: product == null ? '' : product.title,
           validator: (String value) {

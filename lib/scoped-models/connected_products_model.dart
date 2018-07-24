@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:scoped_model/scoped_model.dart';
+import 'package:http/http.dart' as http;
 
 import '../models/product.dart';
 import '../models/user.dart';
@@ -10,31 +13,47 @@ class ConnectedProductsModel extends Model {
 
   void addProduct(
       String title, String description, String image, double price) {
-    final Product newProduct = Product(
-        title: title,
-        description: description,
-        image: image,
-        price: price,
-        userEmail: _authenicatedUser.email,
-        userId: _authenicatedUser.id);
-    _products.add(newProduct);
-    notifyListeners();
+    final Map<String, dynamic> productData = {
+      'title': title,
+      'description': description,
+      'image':
+          'http://morningnoonandnight.files.wordpress.com/2007/09/chocolate.jpg',
+      'price': price,
+      'userEmail': _authenicatedUser.email,
+      'userId': _authenicatedUser.id
+    };
+
+    http
+        .post('https://flutter-project-70069.firebaseio.com/products.json',
+            body: jsonEncode(productData))
+        .then((http.Response response) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      final Product newProduct = Product(
+          id: responseData['name'],
+          title: title,
+          description: description,
+          image: image,
+          price: price,
+          userEmail: _authenicatedUser.email,
+          userId: _authenicatedUser.id);
+      _products.add(newProduct);
+      notifyListeners();
+    });
   }
 }
 
 class ProductsModel extends ConnectedProductsModel {
-  
-  
   bool _showFavorites = false;
 
   List<Product> get allProducts {
     return List.from(_products);
   }
 
-    List<Product> get displayProducts {
-      if(_showFavorites){
-        return List.from(_products.where((Product product) => product.isFavorited).toList());
-      }
+  List<Product> get displayProducts {
+    if (_showFavorites) {
+      return List.from(
+          _products.where((Product product) => product.isFavorited).toList());
+    }
     return List.from(_products);
   }
 
@@ -49,13 +68,37 @@ class ProductsModel extends ConnectedProductsModel {
     return _products[_selProductIndex];
   }
 
-  bool get displayFavoritesOnly{
+  bool get displayFavoritesOnly {
     return _showFavorites;
   }
 
   void selectProduct(int index) {
     _selProductIndex = index;
     notifyListeners();
+  }
+
+  void fetchProducts() {
+    http
+        .get('https://flutter-project-70069.firebaseio.com/products.json')
+        .then((http.Response response) {
+      final List<Product> fetchedProductList = [];
+      final Map<String, dynamic> productListData =
+          json.decode(response.body);
+      productListData
+          .forEach((String productId, dynamic productData) {
+        final Product product = Product(
+            id: productId,
+            title: productData['description'],
+            description: productData['description'],
+            image: productData['image'],
+            price: productData['price'],
+            userEmail: productData['userEmail'],
+            userId: productData['userId']);
+            fetchedProductList.add(product);
+      });
+      _products = fetchedProductList;
+      notifyListeners();
+    });
   }
 
   void toggleProductFavorite() {
@@ -69,15 +112,14 @@ class ProductsModel extends ConnectedProductsModel {
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId,
         isFavorited: newFavoriteStatus);
-        _products[selectedProductIndex] = updateProduct;
-        _selProductIndex = null;
-        notifyListeners();
+    _products[selectedProductIndex] = updateProduct;
+    _selProductIndex = null;
+    notifyListeners();
   }
 
-  
-
-  void updateProduct(String title, String description, String image, double price) {
-        final Product updatedProduct = Product(
+  void updateProduct(
+      String title, String description, String image, double price) {
+    final Product updatedProduct = Product(
         title: title,
         description: description,
         image: image,
@@ -85,26 +127,23 @@ class ProductsModel extends ConnectedProductsModel {
         userEmail: selectedProduct.userEmail,
         userId: selectedProduct.userId);
     _products[selectedProductIndex] = updatedProduct;
-    
-     notifyListeners();
+
+    notifyListeners();
   }
 
-  void toogleDisplayMode(){
+  void toogleDisplayMode() {
     _showFavorites = !_showFavorites;
     notifyListeners();
-    
   }
 
   void deleteProduct(int index) {
     _products.removeAt(selectedProductIndex);
-     notifyListeners();
+    notifyListeners();
   }
 }
 
 class UserModel extends ConnectedProductsModel {
-  
-
-  void login(email, password){
+  void login(email, password) {
     _authenicatedUser = User(id: 'dasjdsd', email: email, password: password);
   }
 }
