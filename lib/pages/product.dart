@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:scoped_model/scoped_model.dart';
 
 import 'package:flutter/material.dart';
-import '../scoped-models/products.dart';
+import '../scoped-models/main.dart';
 
 import '../widgets/ui_elements/address_tag.dart';
 import '../models/product.dart';
@@ -116,9 +116,9 @@ class ProductPage extends StatelessWidget {
       print('Back button pressed!');
       Navigator.pop(context, false);
       return Future.value(false);
-    }, child: ScopedModelDescendant<ProductsModel>(
-      builder: (BuildContext context, Widget widget, ProductsModel model) {
-        final Product product = model.products[productIndex];
+    }, child: ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget widget, MainModel model) {
+        final Product product = model.allProducts[productIndex];
         return Scaffold(
           appBar: AppBar(
             title: Text(product.title),

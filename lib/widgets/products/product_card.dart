@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-import '../../scoped-models/products.dart';
+import '../../scoped-models/main.dart';
 import './price_tag.dart';
 import '../ui_elements/title_default.dart';
 import '../../models/product.dart';
@@ -33,7 +33,10 @@ class ProductCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(4.0)),
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
-            child: Text('Buckhead Atlanta Georgia')));
+            child: Column(children: <Widget>[
+              Text('Buckhead Atlanta Georgia'),
+              Text(product.userEmail),
+            ],) ));
   }
 
   Widget buildButtonBar(BuildContext context) {
@@ -46,11 +49,11 @@ class ProductCard extends StatelessWidget {
           onPressed: () => Navigator.pushNamed<bool>(
               context, '/product/' + productIndex.toString()),
         ),
-         ScopedModelDescendant<ProductsModel>(
-          builder: (BuildContext context, Widget widget, ProductsModel model) {
+         ScopedModelDescendant<MainModel>(
+          builder: (BuildContext context, Widget widget, MainModel model) {
             return IconButton(
                 color: Colors.red,
-                icon: Icon(model.products[productIndex].isFavorited
+                icon: Icon(model.allProducts[productIndex].isFavorited
                     ? Icons.favorite
                     : Icons.favorite_border),
                 onPressed: () {
