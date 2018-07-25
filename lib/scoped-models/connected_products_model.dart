@@ -167,8 +167,17 @@ class ProductsModel extends ConnectedProductsModel {
   }
 
   void deleteProduct(int index) {
+    _isLoading = true;
+    final deletedProductId = selectedProduct.id;
     _products.removeAt(selectedProductIndex);
     notifyListeners();
+    http.delete('https://flutter-project-70069.firebaseio.com/products/${deletedProductId}.json')
+    .then((http.Response response){
+      _isLoading = false;
+      _selProductIndex = null;
+      notifyListeners();
+    });
+
   }
 }
 
