@@ -43,6 +43,21 @@ class _ProductsPage extends State<ProductsPage>{
     );
   }
 
+  Widget buildProductList(){
+
+    return ScopedModelDescendant(builder: (BuildContext context, Widget widget, MainModel model){
+
+      Widget content = Center(child:Text('No Products Found'));
+      if(model.displayProducts.length > 0 && !model.isLoading){
+        content = Products();
+      }
+      else if(model.isLoading){
+        content = CircularProgressIndicator();
+      }
+      return content;
+    },);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,7 +80,7 @@ class _ProductsPage extends State<ProductsPage>{
         ],
         title: Text('EasyList'),
       ),
-      body: Products(),
+      body: buildProductList(),
     );
   }
 }

@@ -10,9 +10,11 @@ class ConnectedProductsModel extends Model {
   List<Product> _products = [];
   User _authenicatedUser;
   int _selProductIndex;
+  bool _isLoading = false;
 
   void addProduct(
       String title, String description, String image, double price) {
+        _isLoading = true;
     final Map<String, dynamic> productData = {
       'title': title,
       'description': description,
@@ -27,6 +29,7 @@ class ConnectedProductsModel extends Model {
         .post('https://flutter-project-70069.firebaseio.com/products.json',
             body: jsonEncode(productData))
         .then((http.Response response) {
+          _isLoading = false;
       final Map<String, dynamic> responseData = json.decode(response.body);
       final Product newProduct = Product(
           id: responseData['name'],
@@ -78,12 +81,19 @@ class ProductsModel extends ConnectedProductsModel {
   }
 
   void fetchProducts() {
+    _isLoading = true;
     http
         .get('https://flutter-project-70069.firebaseio.com/products.json')
         .then((http.Response response) {
       final List<Product> fetchedProductList = [];
       final Map<String, dynamic> productListData =
           json.decode(response.body);
+          if(productListData == null){
+              _products = fetchedProductList;
+              _isLoading = false;
+              notifyListeners();
+              return;
+          }
       productListData
           .forEach((String productId, dynamic productData) {
         final Product product = Product(
@@ -97,6 +107,7 @@ class ProductsModel extends ConnectedProductsModel {
             fetchedProductList.add(product);
       });
       _products = fetchedProductList;
+      _isLoading = false;
       notifyListeners();
     });
   }
@@ -145,5 +156,12 @@ class ProductsModel extends ConnectedProductsModel {
 class UserModel extends ConnectedProductsModel {
   void login(email, password) {
     _authenicatedUser = User(id: 'dasjdsd', email: email, password: password);
+  }
+}
+
+class UtilityModel extends ConnectedProductsModel{
+
+  bool get isLoading{
+    return _isLoading;
   }
 }
