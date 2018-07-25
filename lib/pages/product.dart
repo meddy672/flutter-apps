@@ -8,9 +8,9 @@ import '../widgets/ui_elements/address_tag.dart';
 import '../models/product.dart';
 
 class ProductPage extends StatelessWidget {
-  final int productIndex;
+  final Product product;
 
-  ProductPage(this.productIndex);
+  ProductPage(this.product);
 
   _showWarningDialog(BuildContext context) {
     showDialog(
@@ -112,36 +112,39 @@ class ProductPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(onWillPop: () {
-      print('Back button pressed!');
-      Navigator.pop(context, false);
-      return Future.value(false);
-    }, child: ScopedModelDescendant<MainModel>(
-      builder: (BuildContext context, Widget widget, MainModel model) {
-        final Product product = model.allProducts[productIndex];
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(product.title),
-          ),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Image.network(product.image),
-              buildAddressContainer(),
-              buildTitleContainer(product.title, product.price),
-              buildLabelContainer(),
-              Container(
-                padding: EdgeInsets.all(10.0),
-                child: Text(
-                  product.description,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              buildDeleteContainer(context),
-            ],
-          ),
-        );
+    return WillPopScope(
+      onWillPop: () {
+        print('Back button pressed!');
+        Navigator.pop(context, false);
+        return Future.value(false);
       },
-    ));
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(product.title),
+        ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            FadeInImage(
+              image: NetworkImage(product.image),
+              height: 300.0,
+              fit: BoxFit.cover,
+              placeholder: AssetImage('assets/food.jpg'),
+            ),
+            buildAddressContainer(),
+            buildTitleContainer(product.title, product.price),
+            buildLabelContainer(),
+            Container(
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                product.description,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            buildDeleteContainer(context),
+          ],
+        ),
+      ),
+    );
   }
 }

@@ -10,7 +10,7 @@ import '../models/user.dart';
 class ConnectedProductsModel extends Model {
   List<Product> _products = [];
   User _authenicatedUser;
-  int _selProductIndex;
+  String _selProductId;
   bool _isLoading = false;
 
   Future<Null> addProduct(
@@ -62,23 +62,26 @@ class ProductsModel extends ConnectedProductsModel {
     return List.from(_products);
   }
 
-  int get selectedProductIndex {
-    return _selProductIndex;
+  String get _selectedProductId {
+    return _selProductId;
   }
 
   Product get selectedProduct {
-    if (_selProductIndex == null) {
+    if (_selProductId == null) {
       return null;
     }
-    return _products[_selProductIndex];
+    return _products.firstWhere((Product product) {
+      return product.id == _selProductId;
+    });
+    ;
   }
 
   bool get displayFavoritesOnly {
     return _showFavorites;
   }
 
-  void selectProduct(int index) {
-    _selProductIndex = index;
+  void selectProduct(String productId) {
+    _selProductId = productId;
     notifyListeners();
   }
 
@@ -117,6 +120,7 @@ class ProductsModel extends ConnectedProductsModel {
     final bool isCurrentlyFavorite = selectedProduct.isFavorited;
     final bool newFavoriteStatus = !isCurrentlyFavorite;
     final Product updateProduct = Product(
+        id: selectedProduct.id,
         title: selectedProduct.title,
         description: selectedProduct.description,
         price: selectedProduct.price,
@@ -125,7 +129,7 @@ class ProductsModel extends ConnectedProductsModel {
         userId: selectedProduct.userId,
         isFavorited: newFavoriteStatus);
     _products[selectedProductIndex] = updateProduct;
-    _selProductIndex = null;
+    _selProductId = null;
     notifyListeners();
   }
 
@@ -156,9 +160,16 @@ class ProductsModel extends ConnectedProductsModel {
           price: price,
           userEmail: selectedProduct.userEmail,
           userId: selectedProduct.userId);
+
       _products[selectedProductIndex] = updatedProduct;
       notifyListeners();
     });
+  }
+
+  int get selectedProductIndex{
+    return _products.indexWhere( (Product product){
+        return product.id == _selProductId;
+    } );
   }
 
   void toogleDisplayMode() {
@@ -169,15 +180,20 @@ class ProductsModel extends ConnectedProductsModel {
   void deleteProduct(int index) {
     _isLoading = true;
     final deletedProductId = selectedProduct.id;
-    _products.removeAt(selectedProductIndex);
-    notifyListeners();
-    http.delete('https://flutter-project-70069.firebaseio.com/products/${deletedProductId}.json')
-    .then((http.Response response){
-      _isLoading = false;
-      _selProductIndex = null;
-      notifyListeners();
+    final int selectedProductIndex = _products.indexWhere((Product product) {
+      return product.id == _selProductId;
     });
 
+    _products.removeAt(selectedProductIndex);
+    notifyListeners();
+    http
+        .delete(
+            'https://flutter-project-70069.firebaseio.com/products/${deletedProductId}.json')
+        .then((http.Response response) {
+      _isLoading = false;
+      _selProductId = null;
+      notifyListeners();
+    });
   }
 }
 

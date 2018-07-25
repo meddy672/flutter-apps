@@ -42,29 +42,28 @@ class ProductCard extends StatelessWidget {
   }
 
   Widget buildButtonBar(BuildContext context) {
-    return ButtonBar(
-      alignment: MainAxisAlignment.center,
-      children: <Widget>[
-        IconButton(
-          color: Colors.deepPurple,
-          icon: Icon(Icons.info),
-          onPressed: () => Navigator.pushNamed<bool>(
-              context, '/product/' + productIndex.toString()),
-        ),
-        ScopedModelDescendant<MainModel>(
-          builder: (BuildContext context, Widget widget, MainModel model) {
-            return IconButton(
-                color: Colors.red,
-                icon: Icon(model.allProducts[productIndex].isFavorited
-                    ? Icons.favorite
-                    : Icons.favorite_border),
-                onPressed: () {
-                  model.selectProduct(productIndex);
-                  model.toggleProductFavorite();
-                });
-          },
-        )
-      ],
+    return ScopedModelDescendant<MainModel>(
+      builder: (BuildContext context, Widget widget, MainModel model) {
+        return ButtonBar(
+            alignment: MainAxisAlignment.center,
+            children: <Widget>[
+              IconButton(
+                color: Colors.deepPurple,
+                icon: Icon(Icons.info),
+                onPressed: () => Navigator.pushNamed<bool>(
+                    context, '/product/' + model.allProducts[productIndex].id),
+              ),
+              IconButton(
+                  color: Colors.red,
+                  icon: Icon(model.allProducts[productIndex].isFavorited
+                      ? Icons.favorite
+                      : Icons.favorite_border),
+                  onPressed: () {
+                    model.selectProduct(model.allProducts[productIndex].id);
+                    model.toggleProductFavorite();
+                  }),
+            ]);
+      },
     );
   }
 
