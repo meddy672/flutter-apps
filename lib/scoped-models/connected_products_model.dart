@@ -33,9 +33,9 @@ class ProductsModel extends ConnectedProductsModel {
     return List.from(_products);
   }
 
-  String get _selectedProductId {
-    return _selProductId;
-  }
+  // String get _selectedProductId {
+  //   return _selProductId;
+  // }
 
   Product get selectedProduct {
     if (_selProductId == null) {
@@ -104,7 +104,7 @@ class ProductsModel extends ConnectedProductsModel {
     notifyListeners();
     return http
         .get('https://flutter-project-70069.firebaseio.com/products.json')
-        .then((http.Response response) {
+        .then<Null>((http.Response response) {
       final List<Product> fetchedProductList = [];
       final Map<String, dynamic> productListData = json.decode(response.body);
       if (productListData == null) {
@@ -128,6 +128,7 @@ class ProductsModel extends ConnectedProductsModel {
       _isLoading = false;
       _selProductId = null;
       notifyListeners();
+      return;
     }).catchError( (error){
             _isLoading = false;
             notifyListeners();
@@ -211,7 +212,7 @@ class ProductsModel extends ConnectedProductsModel {
     final deletedProductId = selectedProduct.id;
     _products.removeAt(selectedProductIndex);
     notifyListeners();
-    http
+   return http
         .delete(
             'https://flutter-project-70069.firebaseio.com/products/${deletedProductId}.json')
         .then((http.Response response) {

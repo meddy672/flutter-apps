@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'package:scoped_model/scoped_model.dart';
+
 
 import 'package:flutter/material.dart';
-import '../scoped-models/main.dart';
 
 import '../widgets/ui_elements/address_tag.dart';
 import '../models/product.dart';

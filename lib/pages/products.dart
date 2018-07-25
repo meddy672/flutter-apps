@@ -72,7 +72,7 @@ class _ProductsPage extends State<ProductsPage>{
                     ? Icons.favorite
                     : Icons.favorite_border),
                 onPressed: () {
-                  model.toogleDisplayMode();
+                 // model.toogleDisplayMode();
                 },
               );
             },
