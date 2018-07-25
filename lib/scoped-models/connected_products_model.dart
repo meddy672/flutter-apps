@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
@@ -12,9 +13,10 @@ class ConnectedProductsModel extends Model {
   int _selProductIndex;
   bool _isLoading = false;
 
-  void addProduct(
+  Future<Null> addProduct(
       String title, String description, String image, double price) {
         _isLoading = true;
+        notifyListeners();
     final Map<String, dynamic> productData = {
       'title': title,
       'description': description,
@@ -25,7 +27,7 @@ class ConnectedProductsModel extends Model {
       'userId': _authenicatedUser.id
     };
 
-    http
+   return http
         .post('https://flutter-project-70069.firebaseio.com/products.json',
             body: jsonEncode(productData))
         .then((http.Response response) {
@@ -82,6 +84,7 @@ class ProductsModel extends ConnectedProductsModel {
 
   void fetchProducts() {
     _isLoading = true;
+    notifyListeners();
     http
         .get('https://flutter-project-70069.firebaseio.com/products.json')
         .then((http.Response response) {

@@ -52,7 +52,7 @@ class _ProductsPage extends State<ProductsPage>{
         content = Products();
       }
       else if(model.isLoading){
-        content = CircularProgressIndicator();
+        content = Center(child: CircularProgressIndicator());
       }
       return content;
     },);

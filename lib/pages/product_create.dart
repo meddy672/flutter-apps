@@ -84,12 +84,17 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
   Widget _buildSubmitButton(Product product) {
     return ScopedModelDescendant<MainModel>(
       builder: (BuildContext context, Widget child, MainModel model) {
-        return RaisedButton(
-          textColor: Colors.white,
-          child: Text('Save'),
-          onPressed: () => _createProduct(model.addProduct, model.updateProduct,
-              model.selectProduct ,model.selectedProductIndex),
-        );
+        return model.isLoading
+            ? Center(child: CircularProgressIndicator())
+            : RaisedButton(
+                textColor: Colors.white,
+                child: Text('Save'),
+                onPressed: () => _createProduct(
+                    model.addProduct,
+                    model.updateProduct,
+                    model.selectProduct,
+                    model.selectedProductIndex),
+              );
       },
     );
   }
@@ -118,10 +123,11 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
                     ),
                     _buildSubmitButton(product),
                   ],
-          ))));
+                ))));
   }
 
-  void _createProduct(Function addProduct, Function updateProduct, Function setSelectedProduct,
+  void _createProduct(
+      Function addProduct, Function updateProduct, Function setSelectedProduct,
       [int selectedProductIndex]) {
     if (!_formKey.currentState.validate()) {
       return;
@@ -129,21 +135,22 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     _formKey.currentState.save();
     if (selectedProductIndex == null) {
       addProduct(
-          _formData['title'],
-           _formData['description'],
-          _formData['image'],
-          _formData['price']
-          );
+        _formData['title'],
+        _formData['description'],
+        _formData['image'],
+        _formData['price']
+        ).then((_) =>    Navigator
+        .pushReplacementNamed(context, '/products')
+        .then(((_) => setSelectedProduct(null))));
     } else {
       updateProduct(
-          _formData['title'],
-          _formData['description'],
-          _formData['image'],
-          _formData['price']
-          );
+        _formData['title'],
+        _formData['description'],
+        _formData['image'],
+        _formData['price']);
     }
 
-    Navigator.pushReplacementNamed(context, '/products').then(((_) => setSelectedProduct(null)));
+ 
   }
 
   @override
