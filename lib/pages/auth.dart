@@ -58,9 +58,6 @@ class _AuthPageState extends State<AuthPage> {
       obscureText: true,
       decoration: InputDecoration(
           labelText: 'Confirm Password', filled: true, fillColor: Colors.white),
-      onSaved: (String value) {
-        //_formData['email'] = value;
-      },
       validator: (String value) {
         if (_passwordTextController.text != value) {
           return 'Passwords do not match';
@@ -79,7 +76,7 @@ class _AuthPageState extends State<AuthPage> {
         _formData['password'] = value;
       },
       validator: (String value) {
-        if (value.isEmpty || value.length < 0) {
+        if (value.isEmpty || value.length < 6) {
           return 'Password is invalid';
         }
       },
@@ -97,14 +94,40 @@ class _AuthPageState extends State<AuthPage> {
         });
   }
 
-  void _submitForm(Function login) {
+  void _submitForm(Function login, Function signup) async {
     if (!_formKey.currentState.validate() || !_formData['acceptTerms']) {
       return;
     }
     _formKey.currentState.save();
-    login(_formData['email'], _formData['password']);
+    if (_authMode == AuthMode.Login) {
+      login(_formData['email'], _formData['password']);
+    } else {
+      signup(_formData['email'], _formData['password']);
+    }
 
-    Navigator.pushReplacementNamed(context, '/products');
+    final Map<String, dynamic> successInformation =
+        await signup(_formData['email'], _formData['password']);
+
+    if (successInformation['success']) {
+      Navigator.pushReplacementNamed(context, '/products');
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('An Error Has Occured'),
+              content: Text(successInformation['message']),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('Ok'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            );
+          });
+    }
   }
 
   @override
@@ -158,11 +181,17 @@ class _AuthPageState extends State<AuthPage> {
                               ScopedModelDescendant<MainModel>(
                                 builder: (BuildContext context, Widget widget,
                                     MainModel model) {
-                                  return RaisedButton(
-                                    textColor: Colors.white,
-                                    child: Text('LOGIN'),
-                                    onPressed: () => _submitForm(model.login),
-                                  );
+                                  return model.isLoading
+                                      ? CircularProgressIndicator()
+                                      : RaisedButton(
+                                          textColor: Colors.white,
+                                          child: Text(
+                                              _authMode == AuthMode.Login
+                                                  ? 'LOGIN'
+                                                  : 'SIGNUP'),
+                                          onPressed: () => _submitForm(
+                                              model.login, model.signup),
+                                        );
                                 },
                               )
                             ],

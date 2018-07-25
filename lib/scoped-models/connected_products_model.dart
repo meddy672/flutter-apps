@@ -12,13 +12,9 @@ class ConnectedProductsModel extends Model {
   User _authenicatedUser;
   String _selProductId;
   bool _isLoading = false;
-
- 
 }
 
 class ProductsModel extends ConnectedProductsModel {
-
-
   bool _showFavorites = false;
 
   List<Product> get allProducts {
@@ -55,7 +51,7 @@ class ProductsModel extends ConnectedProductsModel {
     notifyListeners();
   }
 
- Future<bool> addProduct(
+  Future<bool> addProduct(
       String title, String description, String image, double price) {
     _isLoading = true;
     notifyListeners();
@@ -98,7 +94,6 @@ class ProductsModel extends ConnectedProductsModel {
     });
   }
 
-
   Future<Null> fetchProducts() {
     _isLoading = true;
     notifyListeners();
@@ -129,11 +124,11 @@ class ProductsModel extends ConnectedProductsModel {
       _selProductId = null;
       notifyListeners();
       return;
-    }).catchError( (error){
-            _isLoading = false;
-            notifyListeners();
-            return false;
-    } );
+    }).catchError((error) {
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    });
   }
 
   void toggleProductFavorite() {
@@ -212,7 +207,7 @@ class ProductsModel extends ConnectedProductsModel {
     final deletedProductId = selectedProduct.id;
     _products.removeAt(selectedProductIndex);
     notifyListeners();
-   return http
+    return http
         .delete(
             'https://flutter-project-70069.firebaseio.com/products/${deletedProductId}.json')
         .then((http.Response response) {
@@ -220,17 +215,46 @@ class ProductsModel extends ConnectedProductsModel {
       _selProductId = null;
       notifyListeners();
       return true;
-    }).catchError( (error){
-            _isLoading = false;
-            notifyListeners();
-            return false;
-    } );
+    }).catchError((error) {
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    });
   }
 }
 
 class UserModel extends ConnectedProductsModel {
   void login(email, password) {
     _authenicatedUser = User(id: 'dasjdsd', email: email, password: password);
+  }
+
+  Future<Map<String, dynamic>> signup(String email, String password) async {
+    _isLoading = true;
+    notifyListeners();
+    final Map<String, dynamic> authData = {
+      'email': email,
+      'password': password,
+      'returnSecureToken': true
+    };
+
+    final http.Response response = await http.post(
+        'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyA9IVjY-qAZXb5C919YznesR84uHJpBWFI',
+        body: json.encode(authData),
+        headers: {'Content-Type': 'application/json'});
+    print(json.decode(response.body));
+    final Map<String, dynamic> responseData = json.decode(response.body);
+    bool hasError = true;
+    String message = 'Something went wrong';
+
+    if (responseData.containsKey('idToken')) {
+      hasError = false;
+      message = 'Authenication succeded';
+    } else if (responseData['error']['message'] == 'EMAIL_EXISTS') {
+      message = 'The email already exists.';
+    } 
+    _isLoading = false;
+    notifyListeners();
+    return {'success': !hasError, 'message': message};
   }
 }
 
