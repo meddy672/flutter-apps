@@ -33,10 +33,12 @@ class ProductCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(4.0)),
         child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
-            child: Column(children: <Widget>[
-              Text('Buckhead Atlanta Georgia'),
-              Text(product.userEmail),
-            ],) ));
+            child: Column(
+              children: <Widget>[
+                Text('Buckhead Atlanta Georgia'),
+                Text(product.userEmail),
+              ],
+            )));
   }
 
   Widget buildButtonBar(BuildContext context) {
@@ -49,7 +51,7 @@ class ProductCard extends StatelessWidget {
           onPressed: () => Navigator.pushNamed<bool>(
               context, '/product/' + productIndex.toString()),
         ),
-         ScopedModelDescendant<MainModel>(
+        ScopedModelDescendant<MainModel>(
           builder: (BuildContext context, Widget widget, MainModel model) {
             return IconButton(
                 color: Colors.red,
@@ -72,7 +74,12 @@ class ProductCard extends StatelessWidget {
     return Card(
       child: Column(
         children: <Widget>[
-          Image.network(product.image),
+          FadeInImage(
+            image: NetworkImage(product.image),
+            height: 300.0,
+            fit: BoxFit.cover,
+            placeholder: AssetImage('assets/food.jpg'),
+          ),
           buildTitlePriceRow(),
           buildDecoratedBox(),
           buildButtonBar(context),
