@@ -147,7 +147,10 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
         _formData['title'],
         _formData['description'],
         _formData['image'],
-        _formData['price']);
+        _formData['price']
+        ).then((_) =>    Navigator
+        .pushReplacementNamed(context, '/products')
+        .then(((_) => setSelectedProduct(null))));
     }
 
  
