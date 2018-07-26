@@ -103,7 +103,7 @@ class _AuthPageState extends State<AuthPage> {
         await authenicate(_formData['email'], _formData['password'], _authMode);
 
     if (successInformation['success']) {
-      Navigator.pushReplacementNamed(context, '/products');
+     // Navigator.pushReplacementNamed(context, '/');
     } else {
       showDialog(
           context: context,

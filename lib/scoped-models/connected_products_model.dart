@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../models/product.dart';
 import '../models/user.dart';
@@ -227,11 +228,19 @@ class ProductsModel extends ConnectedProductsModel {
   }
 }
 
+
+/********************************* UserModel *******************************/
+
 class UserModel extends ConnectedProductsModel {
 Timer _authTimer;
+PublishSubject<bool> _userSubject = PublishSubject();
 
 User get user{
   return _authenicatedUser;
+}
+
+PublishSubject<bool> get userSubject{
+  return _userSubject;
 }
 
 void logout() async {
@@ -242,11 +251,16 @@ void logout() async {
   prefs.remove('token');
   prefs.remove('userEmail');
   prefs.remove('userId');
+  
 
 }
 
 void setAuthTimeout(int time){
-  _authTimer = Timer(Duration(seconds: time), logout);
+  _authTimer = Timer(Duration(seconds: time), (){
+
+    logout();
+    _userSubject.add(false);
+  });
 }
 
 
@@ -282,6 +296,7 @@ void setAuthTimeout(int time){
           id: responseData['localId'],
           email: email,
           token: responseData['idToken']);
+          _userSubject.add(true);
           setAuthTimeout(int.parse(responseData['expiresIn']));
           final DateTime now = DateTime.now();
           final DateTime expiryTime = now.add(Duration(seconds: int.parse(responseData['expiresIn'])));
@@ -319,6 +334,7 @@ void setAuthTimeout(int time){
       final String userEmail = prefs.getString('useraEmail');
       final String userId =  prefs.getString('userId');
       final tokenLifeSpan = parsedExpiryTime.difference(now).inSeconds;
+      _userSubject.add(true);
       setAuthTimeout(tokenLifeSpan);
       _authenicatedUser = User(id: userId, email: userEmail, token: token );
       notifyListeners();
