@@ -223,9 +223,36 @@ class ProductsModel extends ConnectedProductsModel {
   }
 }
 
-class UserModel extends ConnectedProductsModel {
-  void login(email, password) {
-    _authenicatedUser = User(id: 'dasjdsd', email: email, password: password);
+class UserModel extends ConnectedProductsModel  {
+
+  Future<Map<String, dynamic>> login(email, password) async {
+    _isLoading = true;
+    notifyListeners();
+    final Map<String, dynamic> authData = {
+      'email': email,
+      'password': password,
+      'returnSecureToken': true
+    };
+
+   http.Response response = await http.post('https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyA9IVjY-qAZXb5C919YznesR84uHJpBWFI',
+    body: json.encode(authData), headers: {
+      'Content-Type': 'application/json'
+    });
+    final Map<String, dynamic> responseData = json.decode(response.body);
+    bool hasError = true;
+    String message = 'Something went wrong';
+
+    if (responseData.containsKey('idToken')) {
+      hasError = false;
+      message = 'Authenication succeded';
+    } else if (responseData['error']['message'] == 'EMAIL_NOT_FOUND') {
+      message = 'The email already exists.';
+    } else if(responseData['error']['message'] == 'INVALID_PASSWORD'){
+       message = 'The password is invalid.';
+    } 
+    _isLoading = false;
+    notifyListeners();
+    return {'success': !hasError, 'message': message};
   }
 
   Future<Map<String, dynamic>> signup(String email, String password) async {
@@ -236,7 +263,6 @@ class UserModel extends ConnectedProductsModel {
       'password': password,
       'returnSecureToken': true
     };
-
     final http.Response response = await http.post(
         'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyA9IVjY-qAZXb5C919YznesR84uHJpBWFI',
         body: json.encode(authData),

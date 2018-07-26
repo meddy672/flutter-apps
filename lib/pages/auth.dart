@@ -99,14 +99,14 @@ class _AuthPageState extends State<AuthPage> {
       return;
     }
     _formKey.currentState.save();
+    Map<String, dynamic> successInformation;
     if (_authMode == AuthMode.Login) {
-      login(_formData['email'], _formData['password']);
+    successInformation = 
+     await login(_formData['email'], _formData['password']);
     } else {
-      signup(_formData['email'], _formData['password']);
+     successInformation =  
+    await signup(_formData['email'], _formData['password']);
     }
-
-    final Map<String, dynamic> successInformation =
-        await signup(_formData['email'], _formData['password']);
 
     if (successInformation['success']) {
       Navigator.pushReplacementNamed(context, '/products');
