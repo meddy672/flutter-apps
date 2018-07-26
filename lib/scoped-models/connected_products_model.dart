@@ -247,6 +247,7 @@ void logout() async {
 
   _authenicatedUser = null;
   _authTimer.cancel();
+  _userSubject.add(false);
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.remove('token');
   prefs.remove('userEmail');
@@ -256,11 +257,7 @@ void logout() async {
 }
 
 void setAuthTimeout(int time){
-  _authTimer = Timer(Duration(seconds: time), (){
-
-    logout();
-    _userSubject.add(false);
-  });
+  _authTimer = Timer(Duration(seconds: time), logout);
 }
 
 
