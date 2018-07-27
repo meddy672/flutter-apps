@@ -11,7 +11,7 @@ class ProductCard extends StatelessWidget {
   final int productIndex;
 
   ProductCard(this.product, this.productIndex);
-
+  
   Widget buildTitlePriceRow() {
     return Container(
       padding: EdgeInsets.all(10.0),
@@ -69,7 +69,6 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Card(
       child: Column(
         children: <Widget>[
