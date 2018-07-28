@@ -11,11 +11,28 @@ class LocationInput extends StatefulWidget {
 
 class _LocationInput extends State<LocationInput> {
   final FocusNode _addressInputFocusNode = FocusNode();
+  Uri _staticMapUri;
 
   @override
     void initState() {
       _addressInputFocusNode.addListener(_updateLocation);
+      getStaticMap();
       super.initState();
+    }
+
+    void getStaticMap() {
+      final StaticMapProvider staticMapProvider = StaticMapProvider('AIzaSyBPqvb9-5ytCObTnJE3J5zw4wSP-yv1UQ4');
+      final Uri staticMapUri = staticMapProvider.getStaticUriWithMarkers([
+        Marker('position', 'Position', 41.40338, 2.17403),
+      ],
+      center: Location(41.40338, 2.17403),
+      width: 500,
+      height: 300,
+      maptype: StaticMapViewType.roadmap
+      );
+      setState(() {
+           _staticMapUri = staticMapUri;  
+      });
     }
 
   @override
@@ -36,7 +53,9 @@ class _LocationInput extends State<LocationInput> {
           child: TextFormField(
             focusNode: _addressInputFocusNode,
           ),
-        )
+        ),
+        SizedBox(height: 10.0),
+        Image.network(_staticMapUri.toString()),
       ],
     );
   }

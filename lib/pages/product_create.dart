@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import '../scoped-models/main.dart';
+import '../widgets/form_inputs/location.dart';
 import '../widgets/helpers/ensure_visible.dart';
 import '../models/product.dart';
 
@@ -119,6 +120,10 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
                     _buildTitleTextField(product),
                     _buildDescriptionTextField(product),
                     _buildPriceTextField(product),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    LocationInput(),
                     SizedBox(
                       height: 10.0,
                     ),
