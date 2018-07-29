@@ -5,6 +5,7 @@ import '../scoped-models/main.dart';
 import '../widgets/form_inputs/location.dart';
 import '../widgets/helpers/ensure_visible.dart';
 import '../models/product.dart';
+import '../models/location_data.dart';
 
 class ProductCreatePage extends StatefulWidget {
   @override
@@ -18,7 +19,8 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     'title': null,
     'description': null,
     'price': null,
-    'image': 'assets/food.jpg'
+    'image': 'assets/food.jpg',
+    'location': null
   };
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _titleFocusNode = FocusNode();
@@ -123,13 +125,18 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
                     SizedBox(
                       height: 10.0,
                     ),
-                    LocationInput(),
+                    LocationInput(_setLocation, product),
                     SizedBox(
                       height: 10.0,
                     ),
                     _buildSubmitButton(product),
                   ],
                 ))));
+  }
+
+  void _setLocation(LocationData locaData){
+
+    _formData['location'] = locaData;
   }
 
   void _createProduct(
@@ -145,7 +152,8 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
         _formData['title'],
         _formData['description'],
         _formData['image'],
-        _formData['price']
+        _formData['price'],
+        _formData['location']
         ).then((bool success) {
           if(success){
            Navigator

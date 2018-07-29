@@ -9,6 +9,7 @@ import 'package:rxdart/rxdart.dart';
 import '../models/product.dart';
 import '../models/user.dart';
 import '../models/auth.dart';
+import '../models/location_data.dart';
 
 class ConnectedProductsModel extends Model {
   List<Product> _products = [];
@@ -51,11 +52,14 @@ class ProductsModel extends ConnectedProductsModel {
 
   void selectProduct(String productId) {
     _selProductId = productId;
-    notifyListeners();
+    if(productId != null){
+      notifyListeners();
+    }
+    
   }
 
   Future<bool> addProduct(
-      String title, String description, String image, double price) {
+      String title, String description, String image, double price, LocationData locaData) {
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> productData = {
@@ -65,7 +69,11 @@ class ProductsModel extends ConnectedProductsModel {
           'http://morningnoonandnight.files.wordpress.com/2007/09/chocolate.jpg',
       'price': price,
       'userEmail': _authenticatedUser.email,
-      'userId': _authenticatedUser.id
+      'userId': _authenticatedUser.id,
+      'loc_lat': locaData.latitude,
+      'loc_lng': locaData.longitude,
+      'loc_address': locaData.address
+
     };
 
     return http
@@ -86,6 +94,7 @@ class ProductsModel extends ConnectedProductsModel {
           description: description,
           image: image,
           price: price,
+          location: locaData,
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
       _products.add(newProduct);
@@ -108,7 +117,6 @@ class ProductsModel extends ConnectedProductsModel {
       final List<Product> fetchedProductList = [];
       final Map<String, dynamic> productListData = json.decode(response.body);
       if (productListData == null) {
-        _products = fetchedProductList;
         _isLoading = false;
         notifyListeners();
         return;
@@ -120,6 +128,7 @@ class ProductsModel extends ConnectedProductsModel {
             description: productData['description'],
             image: productData['image'],
             price: productData['price'],
+            location: LocationData(address: productData['loc_address'], latitude: productData['loc_lat'], longitude: productData['loc_lng']),
             userEmail: productData['userEmail'],
             userId: productData['userId'],
             isFavorited: productData['userfavorites'] == null

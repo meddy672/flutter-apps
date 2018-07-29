@@ -34,7 +34,9 @@ class _ProductListPage extends State<ProductListPage>{
                 .of(context)
                 .push(MaterialPageRoute(builder: (BuildContext context) {
               return ProductCreatePage();
-            }));
+            })).then( (_){
+              model.selectProduct(null);
+            } );
           },
         );
 
