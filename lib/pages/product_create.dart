@@ -6,6 +6,7 @@ import '../widgets/form_inputs/location.dart';
 import '../widgets/helpers/ensure_visible.dart';
 import '../models/product.dart';
 import '../models/location_data.dart';
+import '../widgets/form_inputs/image.dart';
 
 class ProductCreatePage extends StatefulWidget {
   @override
@@ -139,9 +140,9 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
                       height: 10.0,
                     ),
                     LocationInput(_setLocation, product),
-                    SizedBox(
-                      height: 10.0,
-                    ),
+                    SizedBox(height: 10.0,),
+                    ImageInput(),
+                    SizedBox(height: 10.0,),
                     _buildSubmitButton(product),
                   ],
                 ))));
