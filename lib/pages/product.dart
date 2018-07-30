@@ -1,9 +1,10 @@
 import 'dart:async';
 
-
 import 'package:flutter/material.dart';
+import 'package:map_view/map_view.dart';
 
 import '../widgets/ui_elements/address_tag.dart';
+import '../widgets/ui_elements/title_default.dart';
 import '../models/product.dart';
 
 class ProductPage extends StatelessWidget {
@@ -11,14 +12,42 @@ class ProductPage extends StatelessWidget {
 
   ProductPage(this.product);
 
+  void _showMap() {
+    print('!!!!!!!!!!!!!!!Map Function called!!!!!!!!!!!!!!');
+    final List<Marker> marker = <Marker>[
+      Marker('product', 'Product', product.location.latitude,
+          product.location.longitude),
+    ];
+    final cameraPostion = CameraPosition(
+        Location(product.location.latitude, product.location.longitude), 14.0);
+    final mapView = MapView();
+    mapView.show(
+        MapOptions(
+            initialCameraPosition: cameraPostion,
+            mapViewType: MapViewType.normal,
+            title: 'Product Location'),
+        toolbarActions: [ToolbarAction('Close', 1)]);
+    mapView.onToolbarAction.listen((int id) {
+      if (id == 1) {
+        mapView.dismiss();
+      }
+    });
+    mapView.onMapReady.listen((_) {
+      mapView.setMarkers(marker);
+    });
+  }
 
-  Widget buildAddressContainer() {
+  Widget buildAddressContainer(String address, double price) {
     return Container(
       margin: EdgeInsets.only(left: 10.0, top: 20.0, right: 0.0, bottom: 10.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          AddressTag('Buckhead, Atlanta Georgia'),
+          GestureDetector(
+            onTap: _showMap,
+            child: AddressTag(
+                address + ' | ' + price.toString()),
+          ),
         ],
       ),
     );
@@ -30,23 +59,8 @@ class ProductPage extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Text(
+          TitleDefault(
             title,
-            style: TextStyle(
-              color: Colors.grey,
-            ),
-          ),
-          Text(
-            ' | ',
-            style: TextStyle(
-              color: Colors.grey,
-            ),
-          ),
-          Text(
-            '\$${price.toString()}',
-            style: TextStyle(
-              color: Colors.grey,
-            ),
           ),
         ],
       ),
@@ -70,7 +84,6 @@ class ProductPage extends StatelessWidget {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -92,8 +105,8 @@ class ProductPage extends StatelessWidget {
               fit: BoxFit.cover,
               placeholder: AssetImage('assets/food.jpg'),
             ),
-            buildAddressContainer(),
             buildTitleContainer(product.title, product.price),
+            buildAddressContainer(product.location.address, product.price),
             buildLabelContainer(),
             Container(
               padding: EdgeInsets.all(10.0),

@@ -29,8 +29,7 @@
                  until Flutter renders its first frame. It can be removed if
                  there is no splash screen (such as the default splash screen
                  defined in @style/LaunchTheme). -->
-            <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBPqvb9-5ytCObTnJE3J5zw4wSP-yv1UQ4"/>
-            <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
+
             <meta-data
                 android:name="io.flutter.app.android.SplashScreenUntilFirstFrame"
                 android:value="true" />
@@ -40,5 +39,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.apptreesoftware.mapview.MapActivity" android:theme="@style/Theme.AppCompat.Light.DarkActionBar"/>
+        <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBPqvb9-5ytCObTnJE3J5zw4wSP-yv1UQ4"/>
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
     </application>
 </manifest>

@@ -46,7 +46,7 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
           focusNode: _titleFocusNode,
           decoration: InputDecoration(labelText: 'Product Title'),
           controller: _titleTextController,
-          initialValue: product == null ? '' : product.title,
+         // initialValue: product == null ? '' : product.title,
           validator: (String value) {
             if (value.isEmpty) {
               return 'Title is required';

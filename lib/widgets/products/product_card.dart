@@ -35,7 +35,7 @@ class ProductCard extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.5),
             child: Column(
               children: <Widget>[
-                Text('Buckhead Atlanta Georgia'),
+                Text(product.location.address),
                 Text(product.userEmail),
               ],
             )));

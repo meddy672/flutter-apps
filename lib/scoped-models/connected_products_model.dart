@@ -59,7 +59,7 @@ class ProductsModel extends ConnectedProductsModel {
   }
 
   Future<bool> addProduct(
-      String title, String description, String image, double price, LocationData locaData) {
+      String title, String description, String image, double price, LocationData locData) {
     _isLoading = true;
     notifyListeners();
     final Map<String, dynamic> productData = {
@@ -70,9 +70,9 @@ class ProductsModel extends ConnectedProductsModel {
       'price': price,
       'userEmail': _authenticatedUser.email,
       'userId': _authenticatedUser.id,
-      'loc_lat': locaData.latitude,
-      'loc_lng': locaData.longitude,
-      'loc_address': locaData.address
+      'loc_lat': locData.latitude,
+      'loc_lng': locData.longitude,
+      'loc_address': locData.address
 
     };
 
@@ -94,7 +94,7 @@ class ProductsModel extends ConnectedProductsModel {
           description: description,
           image: image,
           price: price,
-          location: locaData,
+          location: locData,
           userEmail: _authenticatedUser.email,
           userId: _authenticatedUser.id);
       _products.add(newProduct);
@@ -121,6 +121,7 @@ class ProductsModel extends ConnectedProductsModel {
         notifyListeners();
         return;
       }
+      print(productListData);
       productListData.forEach((String productId, dynamic productData) {
         final Product product = Product(
             id: productId,
@@ -128,7 +129,10 @@ class ProductsModel extends ConnectedProductsModel {
             description: productData['description'],
             image: productData['image'],
             price: productData['price'],
-            location: LocationData(address: productData['loc_address'], latitude: productData['loc_lat'], longitude: productData['loc_lng']),
+            location: LocationData(
+              address: productData['loc_address'],
+             latitude: productData['loc_lat'], 
+             longitude: productData['loc_lng']),
             userEmail: productData['userEmail'],
             userId: productData['userId'],
             isFavorited: productData['userfavorites'] == null
@@ -141,8 +145,8 @@ class ProductsModel extends ConnectedProductsModel {
         return product.userId == _authenticatedUser.id;
       } ).toList() : fetchedProductList;
       _isLoading = false;
-      _selProductId = null;
       notifyListeners();
+      _selProductId = null;
     }).catchError((error) {
       _isLoading = false;
       notifyListeners();
@@ -174,7 +178,6 @@ class ProductsModel extends ConnectedProductsModel {
       response = await http.delete(
           'https://flutter-project-70069.firebaseio.com/products/${selectedProduct.id}/userfavorites/${_authenticatedUser.id}.json?auth=${_authenticatedUser.token}');
     }
-    print(response.body);
     if (response.statusCode != 200 && response.statusCode != 201) {
       final Product updateProduct = Product(
           id: selectedProduct.id,
@@ -360,7 +363,7 @@ class UserModel extends ConnectedProductsModel {
         notifyListeners();
         return;
       }
-      final String userEmail = prefs.getString('useraEmail');
+      final String userEmail = prefs.getString('userEmail');
       final String userId = prefs.getString('userId');
       final tokenLifeSpan = parsedExpiryTime.difference(now).inSeconds;
       _authenticatedUser = User(id: userId, email: userEmail, token: token);

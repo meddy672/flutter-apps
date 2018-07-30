@@ -38,29 +38,34 @@ class _LocationInput extends State<LocationInput> {
   }
 
   Future<String> _getAddress(double lat, double lng) async {
-
-   Uri uri = Uri.https('maps.googleapis.com', '/maps/api/geocode/json', {
-        'latlng': '${lat.toString()},${lng.toString()}',
-        'key': 'AIzaSyBPqvb9-5ytCObTnJE3J5zw4wSP-yv1UQ4'
-      });
+    Uri uri = Uri.https('maps.googleapis.com', '/maps/api/geocode/json', {
+      'latlng': '${lat.toString()},${lng.toString()}',
+      'key': 'AIzaSyBPqvb9-5ytCObTnJE3J5zw4wSP-yv1UQ4'
+    });
     final http.Response response = await http.get(uri);
     final decodedResponse = json.decode(response.body);
     final formattedAddress = decodedResponse['results'][0]['formatted_address'];
     return formattedAddress;
   }
 
- void _getUserLocation() async{
-   final location = geoloc.Location();
-   final currentLocation = await location.getLocation;
-   final address = await _getAddress(currentLocation['latitude'], currentLocation['longitude']);
-   _getStaticMap(address, geocode: false, lat: currentLocation['latitude'], lng: currentLocation['lng']);
+  void _getUserLocation() async {
+    final location = geoloc.Location();
+    final currentLocation = await location.getLocation;
+    final address = await _getAddress(
+        currentLocation['latitude'], currentLocation['longitude']);
+    _getStaticMap(address,
+        geocode: false,
+        lat: currentLocation['latitude'],
+        lng: currentLocation['lng']);
   }
 
-  void _getStaticMap(String address, {bool geocode = true, double lat, double lng}) async {
+  void _getStaticMap(String address,
+      {bool geocode = true, double lat, double lng}) async {
     if (address.isEmpty) {
       setState(() {
         _staticMapUri = null;
       });
+
       widget.setLocation(null);
       return;
     }
@@ -79,27 +84,30 @@ class _LocationInput extends State<LocationInput> {
           latitude: coords['lat'],
           longitude: coords['lng'],
           address: formattedAddress);
-    } else if(lat == null && lng == null) {
+    } else if (lat == null && lng == null) {
       _locationData = widget.product.location;
-    }else{
-      _locationData = LocationData(address: address, latitude: lat, longitude: lng);
+    } else {
+      _locationData =
+          LocationData(address: address, latitude: lat, longitude: lng);
     }
+    if (mounted) {
+      final StaticMapProvider staticMapProvider =
+          StaticMapProvider('AIzaSyBPqvb9-5ytCObTnJE3J5zw4wSP-yv1UQ4');
+      final Uri staticMapUri = staticMapProvider.getStaticUriWithMarkers([
+        Marker('position', 'Position', _locationData.latitude,
+            _locationData.longitude),
+      ],
+          center: Location(41.40338, 2.17403),
+          width: 500,
+          height: 300,
+          maptype: StaticMapViewType.roadmap);
+      widget.setLocation(_locationData);
 
-    final StaticMapProvider staticMapProvider =
-        StaticMapProvider('AIzaSyBPqvb9-5ytCObTnJE3J5zw4wSP-yv1UQ4');
-    final Uri staticMapUri = staticMapProvider.getStaticUriWithMarkers([
-      Marker('position', 'Position', _locationData.latitude,
-          _locationData.longitude),
-    ],
-        center: Location(41.40338, 2.17403),
-        width: 500,
-        height: 300,
-        maptype: StaticMapViewType.roadmap);
-    widget.setLocation(_locationData);
-    setState(() {
-      _addressInputController.text = _locationData.address;
-      _staticMapUri = staticMapUri;
-    });
+      setState(() {
+        _addressInputController.text = _locationData.address;
+        _staticMapUri = staticMapUri;
+      });
+    }
   }
 
   @override
@@ -131,8 +139,13 @@ class _LocationInput extends State<LocationInput> {
             decoration: InputDecoration(labelText: 'Address'),
           ),
         ),
-        SizedBox(height:  10.0,),
-        FlatButton(child: Text('Locate User'), onPressed: _getUserLocation,),
+        SizedBox(
+          height: 10.0,
+        ),
+        FlatButton(
+          child: Text('Locate User'),
+          onPressed: _getUserLocation,
+        ),
         SizedBox(height: 10.0),
         _staticMapUri == null
             ? Container()
