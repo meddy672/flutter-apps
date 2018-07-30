@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:map_view/map_view.dart';
 
-import '../widgets/ui_elements/address_tag.dart';
 import '../widgets/ui_elements/title_default.dart';
 import '../models/product.dart';
 
@@ -13,43 +12,55 @@ class ProductPage extends StatelessWidget {
   ProductPage(this.product);
 
   void _showMap() {
-    print('!!!!!!!!!!!!!!!Map Function called!!!!!!!!!!!!!!');
-    final List<Marker> marker = <Marker>[
-      Marker('product', 'Product', product.location.latitude,
-          product.location.longitude),
+    print('!!!!!!!!!!!!!!!!!!MAP FUNCTION CALLED!!!!!!!!!!!!!!!!!!!!!');
+    final List<Marker> markers = <Marker>[
+      Marker('position', 'Position', product.location.latitude,
+          product.location.longitude)
     ];
-    final cameraPostion = CameraPosition(
+    final cameraPosition = CameraPosition(
         Location(product.location.latitude, product.location.longitude), 14.0);
     final mapView = MapView();
     mapView.show(
         MapOptions(
-            initialCameraPosition: cameraPostion,
+            initialCameraPosition: cameraPosition,
             mapViewType: MapViewType.normal,
             title: 'Product Location'),
-        toolbarActions: [ToolbarAction('Close', 1)]);
+        toolbarActions: [
+          ToolbarAction('Close', 1),
+        ]);
     mapView.onToolbarAction.listen((int id) {
       if (id == 1) {
         mapView.dismiss();
       }
     });
     mapView.onMapReady.listen((_) {
-      mapView.setMarkers(marker);
+      mapView.setMarkers(markers);
     });
   }
 
-  Widget buildAddressContainer(String address, double price) {
-    return Container(
-      margin: EdgeInsets.only(left: 10.0, top: 20.0, right: 0.0, bottom: 10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          GestureDetector(
-            onTap: _showMap,
-            child: AddressTag(
-                address + ' | ' + price.toString()),
+  Widget _buildAddressPriceRow(String address, double price) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        GestureDetector(
+          onTap: _showMap,
+          child: Text(
+            address,
+            style: TextStyle(fontFamily: 'Oswald', color: Colors.grey),
           ),
-        ],
-      ),
+        ),
+        Container(
+          margin: EdgeInsets.symmetric(horizontal: 5.0),
+          child: Text(
+            '|',
+            style: TextStyle(color: Colors.grey),
+          ),
+        ),
+        Text(
+          '\$' + price.toString(),
+          style: TextStyle(fontFamily: 'Oswald', color: Colors.grey),
+        )
+      ],
     );
   }
 
@@ -106,7 +117,7 @@ class ProductPage extends StatelessWidget {
               placeholder: AssetImage('assets/food.jpg'),
             ),
             buildTitleContainer(product.title, product.price),
-            buildAddressContainer(product.location.address, product.price),
+            _buildAddressPriceRow(product.location.address, product.price),
             buildLabelContainer(),
             Container(
               padding: EdgeInsets.all(10.0),
@@ -115,6 +126,7 @@ class ProductPage extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
             ),
+            RaisedButton(onPressed: _showMap, child: Text('Show Product Location'),)
           ],
         ),
       ),
