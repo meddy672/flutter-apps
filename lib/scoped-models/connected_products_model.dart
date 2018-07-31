@@ -381,12 +381,12 @@ class UserModel extends ConnectedProductsModel {
     http.Response response;
     if (mode == AuthMode.Login) {
       response = await http.post(
-          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=AIzaSyA9IVjY-qAZXb5C919YznesR84uHJpBWFI',
+          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=FIREBASE_API_KEY',
           body: json.encode(authData),
           headers: {'Content-Type': 'application/json'});
     } else {
       response = await http.post(
-          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=AIzaSyA9IVjY-qAZXb5C919YznesR84uHJpBWFI',
+          'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=FIREBASE_API_KEY',
           body: json.encode(authData),
           headers: {'Content-Type': 'application/json'});
     }
