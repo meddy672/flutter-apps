@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -20,7 +22,7 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     'title': null,
     'description': null,
     'price': null,
-    'image': 'assets/food.jpg',
+    'image': null,
     'location': null
   };
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -28,6 +30,8 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
   final _descriptionFocusNode = FocusNode();
   final _priceFocusNode = FocusNode();
   final _titleTextController = TextEditingController();
+  final _descriptionTextController = TextEditingController();
+
 
   Widget _buildTitleTextField(Product product) {
     if(product == null && _titleTextController.text.trim() == ''){
@@ -60,32 +64,41 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
   }
 
   Widget _buildDescriptionTextField(Product product) {
+    if(product == null && _descriptionTextController.text.trim() == ''){
+      _descriptionTextController.text = '';
+    }else if(product != null && _descriptionTextController.text.trim() == ''){
+      _descriptionTextController.text = product.description;
+    }
     return EnsureVisibleWhenFocused(
         focusNode: _descriptionFocusNode,
         child: TextFormField(
           focusNode: _descriptionFocusNode,
           decoration: InputDecoration(labelText: 'Product Description'),
+          controller: _descriptionTextController,
           maxLines: 4,
-          initialValue: product == null ? '' : product.description,
+          //initialValue: product == null ? '' : product.description,
           validator: (String value) {
             if (value.isEmpty || value.length < 10) {
               return 'Description is required and must be at least 10 characters.';
             }
           },
           onSaved: (String value) {
-            _formData['description'] = value;
+            //_formData['description'] = value;
           },
         ));
   }
 
   Widget _buildPriceTextField(Product product) {
+
+
+
     return EnsureVisibleWhenFocused(
         focusNode: _priceFocusNode,
         child: TextFormField(
           focusNode: _priceFocusNode,
           decoration: InputDecoration(labelText: 'Product Price'),
           keyboardType: TextInputType.number,
-          initialValue: product == null ? '' : product.price.toString(),
+          //initialValue: product == null ? '' : product.price.toString(),
           validator: (String value) {
             if (value.isEmpty ||
                 !RegExp(r'^(?:[1-9]\d*|0)?(?:[.,]\d+)?$').hasMatch(value)) {
@@ -141,7 +154,7 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
                     ),
                     LocationInput(_setLocation, product),
                     SizedBox(height: 10.0,),
-                    ImageInput(),
+                    ImageInput(_setImage, product),
                     SizedBox(height: 10.0,),
                     _buildSubmitButton(product),
                   ],
@@ -153,10 +166,15 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     _formData['location'] = locaData;
   }
 
+  void _setImage(File image){
+
+    _formData['image'] = image;
+  }
+
   void _createProduct(
       Function addProduct, Function updateProduct, Function setSelectedProduct,
       [int selectedProductIndex]) {
-    if (!_formKey.currentState.validate()) {
+    if (!_formKey.currentState.validate() || (_formData['image'] == null && selectedProductIndex == -1)) {
       
       return;
     }
@@ -164,7 +182,7 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     if (selectedProductIndex == -1) {
       addProduct(
         _titleTextController.text,
-        _formData['description'],
+        _descriptionTextController.text,
         _formData['image'],
         _formData['price'],
         _formData['location']
@@ -187,7 +205,7 @@ class _ProductCreatePageState extends State<ProductCreatePage> {
     } else {
       updateProduct(
         _titleTextController.text,
-        _formData['description'],
+        _descriptionTextController.text,
         _formData['image'],
         _formData['price'],
         _formData['location']
