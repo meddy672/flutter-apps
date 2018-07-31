@@ -40,7 +40,7 @@ class _LocationInput extends State<LocationInput> {
   Future<String> _getAddress(double lat, double lng) async {
     Uri uri = Uri.https('maps.googleapis.com', '/maps/api/geocode/json', {
       'latlng': '${lat.toString()},${lng.toString()}',
-      'key': 'AIzaSyBPqvb9-5ytCObTnJE3J5zw4wSP-yv1UQ4'
+      'key': 'YOUR_API_KEY'
     });
     final http.Response response = await http.get(uri);
     final decodedResponse = json.decode(response.body);
@@ -72,7 +72,7 @@ class _LocationInput extends State<LocationInput> {
     if (geocode) {
       Uri uri = Uri.https('maps.googleapis.com', '/maps/api/geocode/json', {
         'address': address,
-        'key': 'AIzaSyBPqvb9-5ytCObTnJE3J5zw4wSP-yv1UQ4'
+        'key': 'YOUR_API_KEY'
       });
       final http.Response response = await http.get(uri);
 
@@ -92,7 +92,7 @@ class _LocationInput extends State<LocationInput> {
     }
     if (mounted) {
       final StaticMapProvider staticMapProvider =
-          StaticMapProvider('AIzaSyBPqvb9-5ytCObTnJE3J5zw4wSP-yv1UQ4');
+          StaticMapProvider('YOUR_API_KEY');
       final Uri staticMapUri = staticMapProvider.getStaticUriWithMarkers([
         Marker('position', 'Position', _locationData.latitude,
             _locationData.longitude),
