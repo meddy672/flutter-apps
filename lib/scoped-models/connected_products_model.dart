@@ -152,11 +152,7 @@ class ProductsModel extends ConnectedProductsModel {
         return false;
       }
     });
-    // .catchError((error) {
-    //   _isLoading = false;
-    //   notifyListeners();
-    //   return false;
-    // });
+
   }
 
   Future<Null> fetchProducts({onlyForUser = false}) {
@@ -306,7 +302,7 @@ class ProductsModel extends ConnectedProductsModel {
       _isLoading = false;
       notifyListeners();
       return false;
-    };
+    }
   }
 
   int get selectedProductIndex {

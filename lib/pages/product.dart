@@ -5,6 +5,7 @@ import 'package:map_view/map_view.dart';
 
 import '../widgets/ui_elements/title_default.dart';
 import '../models/product.dart';
+import '../widgets/products/product_fab.dart';
 
 class ProductPage extends StatelessWidget {
   final Product product;
@@ -129,6 +130,7 @@ class ProductPage extends StatelessWidget {
             RaisedButton(onPressed: _showMap, child: Text('Show Product Location'),)
           ],
         ),
+        floatingActionButton: ProductFAB(product),
       ),
     );
   }
