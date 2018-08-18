@@ -1,6 +1,6 @@
 # Introduction
 
-EasyList is a mobile application that allows create, update and delete products. The application allows users to create an account and view all products they have created. Users can only view the products they create, as well as filter their favorited products. Detailed information can be obtained about each product by clicking the information icon of each product. A user can also view the location of the product by clicking on the address of the product.
+EasyList is a mobile application that allows users to create, update and delete products. The application allows users to create an account and view all products they have created. Users can only view the products they create, as well as filter their favorited products. Detailed information can be obtained about each product by clicking the information icon of each product. A user can also view the location of the product by clicking on the address of the product.
 
 ## Objective
 
